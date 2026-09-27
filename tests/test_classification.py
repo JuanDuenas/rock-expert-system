@@ -4,6 +4,12 @@ Demonstrates pure Forward Chaining for the 6 target rocks,
 and the Goal-Driven request generation for ambiguous data.
 """
 import unittest
+
+# Monkey patch for experta on Python 3.10+
+import collections
+import collections.abc
+collections.Mapping = collections.abc.Mapping
+
 from engine.engine import RockExpertEngine
 from facts.facts import Evidence, Classification, Recommendation, Goal, Request
 
@@ -55,6 +61,28 @@ class TestRockClassification(unittest.TestCase):
         self.engine.declare(Evidence(acid_reaction="yes"))
         self.engine.run()
         self.assertEqual(self.get_classification(), "marble")
+
+    def test_pumice(self):
+        self.engine.declare(Evidence(texture="vesicular"))
+        self.engine.run()
+        self.assertEqual(self.get_classification(), "pumice")
+
+    def test_obsidian(self):
+        self.engine.declare(Evidence(texture="glassy"))
+        self.engine.run()
+        self.assertEqual(self.get_classification(), "obsidian")
+
+    def test_gneiss(self):
+        self.engine.declare(Evidence(texture="foliated"))
+        self.engine.declare(Evidence(foliation="banded"))
+        self.engine.run()
+        self.assertEqual(self.get_classification(), "gneiss")
+
+    def test_quartzite(self):
+        self.engine.declare(Evidence(texture="granoblastic"))
+        self.engine.declare(Evidence(acid_reaction="no"))
+        self.engine.run()
+        self.assertEqual(self.get_classification(), "quartzite")
 
     def test_goal_driven_request_ambiguous(self):
         """Test that injecting a goal triggers a Request for missing information."""
