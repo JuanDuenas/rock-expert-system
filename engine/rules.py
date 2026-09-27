@@ -13,7 +13,12 @@ class RockRulesMixin:
     # ---------------------------------------------------------
     # LEVEL 1: Evidence -> Origin (Alpha Network Demonstration)
     # ---------------------------------------------------------
-    @Rule(OR(Evidence(texture="crystalline"), Evidence(texture="aphanitic")))
+    @Rule(OR(
+        Evidence(texture="crystalline"), 
+        Evidence(texture="aphanitic"),
+        Evidence(texture="vesicular"),
+        Evidence(texture="glassy")
+    ))
     def determine_igneous(self):
         print("\n[MATCH] Rule 'determine_igneous' activated")
         print("[ACT] R1 -> Origin(type='igneous')")
@@ -55,6 +60,24 @@ class RockRulesMixin:
         self.declare(Classification(type="basalt"))
 
     @Rule(
+        Origin(type="igneous"),
+        Evidence(texture="vesicular")
+    )
+    def classify_pumice(self):
+        print("\n[MATCH] Rule 'classify_pumice' activated (JOIN beta network)")
+        print("[ACT] R6 -> Classification(type='pumice')")
+        self.declare(Classification(type="pumice"))
+
+    @Rule(
+        Origin(type="igneous"),
+        Evidence(texture="glassy")
+    )
+    def classify_obsidian(self):
+        print("\n[MATCH] Rule 'classify_obsidian' activated (JOIN beta network)")
+        print("[ACT] R7 -> Classification(type='obsidian')")
+        self.declare(Classification(type="obsidian"))
+
+    @Rule(
         Origin(type="sedimentary"),
         Evidence(texture="clastic"),
         Evidence(visible_layers="yes"),
@@ -62,7 +85,7 @@ class RockRulesMixin:
     )
     def classify_sandstone(self):
         print("\n[MATCH] Rule 'classify_sandstone' activated (JOIN beta network)")
-        print("[ACT] R6 -> Classification(type='sandstone')")
+        print("[ACT] R8 -> Classification(type='sandstone')")
         self.declare(Classification(type="sandstone"))
 
     @Rule(
@@ -73,7 +96,7 @@ class RockRulesMixin:
     )
     def classify_limestone(self):
         print("\n[MATCH] Rule 'classify_limestone' activated (JOIN beta network)")
-        print("[ACT] R7 -> Classification(type='limestone')")
+        print("[ACT] R9 -> Classification(type='limestone')")
         self.declare(Classification(type="limestone"))
 
     @Rule(
@@ -83,8 +106,18 @@ class RockRulesMixin:
     )
     def classify_slate(self):
         print("\n[MATCH] Rule 'classify_slate' activated (JOIN beta network)")
-        print("[ACT] R8 -> Classification(type='slate')")
+        print("[ACT] R10 -> Classification(type='slate')")
         self.declare(Classification(type="slate"))
+
+    @Rule(
+        Origin(type="metamorphic"),
+        Evidence(foliation="banded"),
+        Evidence(texture="foliated")
+    )
+    def classify_gneiss(self):
+        print("\n[MATCH] Rule 'classify_gneiss' activated (JOIN beta network)")
+        print("[ACT] R11 -> Classification(type='gneiss')")
+        self.declare(Classification(type="gneiss"))
 
     @Rule(
         Origin(type="metamorphic"),
@@ -93,8 +126,19 @@ class RockRulesMixin:
     )
     def classify_marble(self):
         print("\n[MATCH] Rule 'classify_marble' activated (JOIN beta network)")
-        print("[ACT] R9 -> Classification(type='marble')")
+        print("[ACT] R12 -> Classification(type='marble')")
         self.declare(Classification(type="marble"))
+
+    @Rule(
+        Origin(type="metamorphic"),
+        Evidence(texture="granoblastic"),
+        Evidence(acid_reaction="no")
+    )
+    def classify_quartzite(self):
+        print("\n[MATCH] Rule 'classify_quartzite' activated (JOIN beta network)")
+        print("[ACT] R13 -> Classification(type='quartzite')")
+        self.declare(Classification(type="quartzite"))
+
 
     # ---------------------------------------------------------
     # LEVEL 3: Classification -> Recommendation (MATCH demonstration)
@@ -104,12 +148,16 @@ class RockRulesMixin:
         recommendations = {
             "granite": "construction/coating",
             "basalt": "construction aggregates",
+            "pumice": "abrasives/exfoliants",
+            "obsidian": "surgical blades/ornaments",
             "sandstone": "construction/coating",
             "limestone": "cement manufacturing/construction material",
             "slate": "coating/roofing",
-            "marble": "coating/decoration"
+            "gneiss": "paving/building stone",
+            "marble": "coating/decoration",
+            "quartzite": "railway ballast/countertops"
         }
         use = recommendations.get(rock_type, "general study")
         print(f"\n[MATCH] Rule 'recommend_use' activated for {rock_type}")
-        print(f"[ACT] R10 -> Recommendation(use='{use}')")
+        print(f"[ACT] R14 -> Recommendation(use='{use}')")
         self.declare(Recommendation(use=use))

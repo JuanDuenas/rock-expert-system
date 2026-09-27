@@ -3,7 +3,7 @@ Goal-Driven pattern implementation simulating backward chaining.
 This module strictly isolates the logic that "asks" for missing information,
 so it doesn't get confused with the forward-chaining rules.
 """
-from experta import Rule, NOT, W
+from experta import Rule, NOT, W, OR
 from facts.facts import Goal, Evidence, Origin, Request
 
 class GoalEngineMixin:
@@ -23,9 +23,11 @@ class GoalEngineMixin:
         self.declare(Request(variable="texture"))
 
     # 2. If it's Igneous, we need grain_size to differentiate Granite vs Basalt
+    # We don't ask this for Pumice (vesicular) or Obsidian (glassy).
     @Rule(
         Goal(target="classify"),
         Origin(type="igneous"),
+        OR(Evidence(texture="crystalline"), Evidence(texture="aphanitic")),
         NOT(Evidence(grain_size=W()))
     )
     def ask_grain_size(self):
