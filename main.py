@@ -3,14 +3,20 @@ Main entry point for the interactive console application.
 Demonstrates the Rete inference cycle, working memory state, and Goal-Driven pattern.
 """
 import sys
+
+# Monkey patch for experta on Python 3.10+
+import collections
+import collections.abc
+collections.Mapping = collections.abc.Mapping
+
 from experta import Fact
 from engine.engine import RockExpertEngine
 from facts.facts import Goal, Request, Evidence, Classification, Recommendation
 
 OPTIONS = {
-    "texture": ["crystalline", "aphanitic", "clastic", "foliated", "granoblastic"],
+    "texture": ["crystalline", "aphanitic", "clastic", "foliated", "granoblastic", "vesicular", "glassy"],
     "grain_size": ["fine", "medium", "coarse"],
-    "foliation": ["yes", "no"],
+    "foliation": ["yes", "no", "banded"],
     "visible_layers": ["yes", "no"],
     "acid_reaction": ["yes", "no"],
     "hardness": ["low", "medium", "high"]
