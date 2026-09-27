@@ -1,0 +1,2 @@
+# Requirements for the Rock Classification Expert System
+experta==1.9.4
